@@ -16,7 +16,7 @@ use Sock\SocketClient;
 use Sock\SocketServer;
 use Sock\SocketException;
 
-require __DIR__ . '/lib/SocketServer.php';
+require __DIR__ . '/Socket/SocketServer.php';
 
 class Core extends PluginBase {
     protected \SocketServer $socket;
@@ -52,6 +52,8 @@ class Core extends PluginBase {
                 return;
             }
 
+            $client->send(json_encode(['status' => 200, 'connected' => true]));
+
             $this->getLogger()->info(TextFormat::LIME . "[Websocket Event - Custom Server] Client connected!");
 
             while (true) {
@@ -69,14 +71,14 @@ class Core extends PluginBase {
                         $cached = false;
                         if (PlayerDataProvider::hasData($message->player)) {
                             $player = $this->getServer()->getPlayerExact($message->player);
-                            $client->send(json_encode(['status' => 200, 'message' => 'Got player!', 'cached' => $cached, 'data' => $player]))
+                            $client->send(json_encode(['status' => 200, 'message' => 'Got player!', 'cached' => $cached, 'data' => $player]));
                         }
                     } elseif ($message->request == "playerList") {
                         $list = $this->getServer()->getOnlinePlayers();
-                        $client->send(json_encode(['status' => 200, 'message' => 'Got player!', 'cached' => false, 'data' => $list]))
+                        $client->send(json_encode(['status' => 200, 'message' => 'Got player!', 'cached' => false, 'data' => $list]));
                     } elseif ($message->request == "custom") {
                         $data = $this->getServer()->{$message->function}($message->arguments);
-                        $client->send(json_encode(['status' => 200, 'message' => 'Got player!', 'cached' => false, 'data' => $data]))
+                        $client->send(json_encode(['status' => 200, 'message' => 'Got player!', 'cached' => false, 'data' => $data]));
                     }
                 }
             }
