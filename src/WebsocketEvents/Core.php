@@ -25,7 +25,7 @@ class Core extends PluginBase {
     public Language $language;
 
 	public function onLoad() : void{
-		$this->getLogger()->info(TextFormat::WHITE . "[WebSocket Events] Plugin loaded!");
+		$this->getLogger()->info(TextFormat::WHITE . " Plugin loaded!");
         // Bind the console
         $this->language = new Language('eng');
         $this->console = new ConsoleCommandSender($this->getServer(), $this->language);
@@ -38,8 +38,16 @@ class Core extends PluginBase {
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
 //		$this->getServer()->getPluginManager()->registerEvents(new ExampleListener($this), $this);
 //		$this->getScheduler()->scheduleRepeatingTask(new BroadcastTask($this->getServer()), 120);
-		$this->getLogger()->info(TextFormat::DARK_GREEN . "[Websocket Events] Plugin enabled!");
-        // Enabling websocket server
+		$this->getLogger()->info(TextFormat::DARK_GREEN . " Plugin enabled!");
+        // Enabling websocket server - ASYNC WAY
+        $pid = pcntl_fork();
+        if ($pid == -1) {
+            die("Could not fork!");
+        } elseif ($pid) {
+            $this->getLogger()->info(TextFormat::DARK_YELLOW . " Loading WSS Server...");
+            // Seems to be the parent project
+            return;
+        }
         $this->socket = new SocketServer('localhost', $this->config->get('socket_port', 1991));
         $this->socket->init();
         $this->socket->setConnectionHandler(function($client) {
