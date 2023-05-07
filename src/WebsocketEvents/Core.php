@@ -110,11 +110,12 @@ class Core extends PluginBase {
         });
         $this->socket->listen();
         // Save socket client in the memory
-        apcu_store("{$this->socketID}_pm-socket", $this->socket);
+        //apcu_store("{$this->socketID}_pm-socket", $this->socket);
 	}
 
 	public function onDisable() : void{
         // Let's check if some socket connection is open!
+        /*
         if (apcu_exists("{$this->socketID}_pm-socket")) {
             $this->getLogger()->info(TextFormat::YELLOW . "[Custom Server][] SocketServer in memory active, turn off...");
             apcu_fetch("{$this->socketID}_pm-socket")->close();
@@ -122,7 +123,8 @@ class Core extends PluginBase {
         } else {
             $this->getLogger()->info(TextFormat::GREEN . "[Custom Server][] No WebSocket instance active in memory. " . TextFormat::RED . "You can consider this an error I think");
         }
-        $this->socket->close();
+        */
+        //$this->socket->close();
 		$this->getLogger()->info(TextFormat::DARK_RED . " Plugin disabled!");
 	}
 
