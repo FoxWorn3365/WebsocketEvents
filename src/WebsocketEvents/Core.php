@@ -16,13 +16,13 @@ use Sock\SocketClient;
 use Sock\SocketServer;
 use Sock\SocketException;
 
-require __DIR__ . '/Socket/SocketServer.php';
+require __DIR__ . '/../Socket/SocketServer.php';
 
 class Core extends PluginBase {
-    protected \SocketServer $socket;
-    protected $config;
-    protected ConsoleCommandSender $console;
-    protected Language $language;
+    public $socket;
+    public $config;
+    public ConsoleCommandSender $console;
+    public Language $language;
 
 	public function onLoad() : void{
 		$this->getLogger()->info(TextFormat::WHITE . "[WebSocket Events] Plugin loaded!");
