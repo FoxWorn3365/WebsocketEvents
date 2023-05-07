@@ -13,7 +13,7 @@ class SocketServer {
 	protected $_listenLoop;
 	protected $connectionHandler;
 	
-	public function __construct( $port = 3000, $address = '127.0.0.1' ) {
+	public function __construct(string $address = '127.0.0.1' , int $port = 3000) {
 		$this->address = $address;
 		$this->port = $port;
 		$this->_listenLoop = false;
