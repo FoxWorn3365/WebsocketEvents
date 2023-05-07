@@ -106,6 +106,7 @@ class Core extends PluginBase {
 
 	public function onDisable() : void{
 		$this->getLogger()->info(TextFormat::DARK_RED . "[WebSocket Events] Plugin disabled!");
+        $this->socket->close();
 	}
 
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
