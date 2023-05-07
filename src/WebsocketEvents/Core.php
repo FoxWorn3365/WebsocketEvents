@@ -40,7 +40,7 @@ class Core extends PluginBase {
 //		$this->getScheduler()->scheduleRepeatingTask(new BroadcastTask($this->getServer()), 120);
 		$this->getLogger()->info(TextFormat::DARK_GREEN . "[Websocket Events] Plugin enabled!");
         // Enabling websocket server
-        $this->socket = new SocketServer('localhost', $this->config->get('socket_port', 1005));
+        $this->socket = new SocketServer('localhost', $this->config->get('socket_port', 1991));
         $this->socket->init();
         $this->socket->setConnectionHandler(function($client) {
             $pid = pcntl_fork();
