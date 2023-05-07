@@ -45,7 +45,6 @@ class Core extends PluginBase {
             $this->config->set('port', 1945);
             $this->config->save();
         }
-        $this->getServer()->getPluginManager()->registerEvents($this, $this);
 //		$this->getServer()->getPluginManager()->registerEvents(new ExampleListener($this), $this);
 //		$this->getScheduler()->scheduleRepeatingTask(new BroadcastTask($this->getServer()), 120);
 		$this->getLogger()->info(TextFormat::DARK_GREEN . " Plugin enabled!");
