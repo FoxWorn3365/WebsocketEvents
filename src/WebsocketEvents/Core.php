@@ -36,11 +36,11 @@ class Core extends PluginBase {
         @mkdir($this->getDataFolder());
         $this->saveResource("config.yml");
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-		$this->getServer()->getPluginManager()->registerEvents(new ExampleListener($this), $this);
+//		$this->getServer()->getPluginManager()->registerEvents(new ExampleListener($this), $this);
 		$this->getScheduler()->scheduleRepeatingTask(new BroadcastTask($this->getServer()), 120);
 		$this->getLogger()->info(TextFormat::DARK_GREEN . "[Websocket Events] Plugin enabled!");
         // Enabling websocket server
-        $this->socket = new SocketServer('localhost', $config->get('socket_port', 1005));
+        $this->socket = new SocketServer('localhost', $this->config->get('socket_port', 1005));
         $this->socket->init();
         $this->socket->setConnectionHandler(function($client) {
             $pid = pcntl_fork();
@@ -54,7 +54,7 @@ class Core extends PluginBase {
 
             $client->send(json_encode(['status' => 200, 'connected' => true]));
 
-            $this->getLogger()->info(TextFormat::LIME . "[Websocket Event - Custom Server] Client connected!");
+            $this->getLogger()->info(TextFormat::GREEN . "[Websocket Event - Custom Server] Client connected!");
 
             while (true) {
                 $message = $client->read();
@@ -84,7 +84,7 @@ class Core extends PluginBase {
             }
             $this->getLogger()->info(TextFormat::ORANGE . "[Websocket Event - Custom Server] Client disconnected!");
         });
-        $server->listen();
+        $this->socket->listen();
 
 	}
 
