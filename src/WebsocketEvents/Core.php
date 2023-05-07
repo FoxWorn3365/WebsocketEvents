@@ -76,7 +76,13 @@ class Core extends PluginBase {
             while (true) {
                 $message = $client->read();
                 if ($message == '') {
-                    return;
+                    continue;
+                }
+
+                // Let's see if it's a "hello world" message!
+                if ($message === "hello world") {
+                    $client->send("Hello world! v1");
+                    continue;
                 }
                 // Send a command to the console.
                 // WAIT! Let's see the type! if it's get SO we need to send the user's informations!
@@ -104,8 +110,8 @@ class Core extends PluginBase {
 	}
 
 	public function onDisable() : void{
-		$this->getLogger()->info(TextFormat::DARK_RED . "[WebSocket Events] Plugin disabled!");
         $this->socket->close();
+		$this->getLogger()->info(TextFormat::DARK_RED . "[WebSocket Events] Plugin disabled!");
 	}
 
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
