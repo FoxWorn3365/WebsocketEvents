@@ -1,0 +1,4 @@
+name: Websocket Events
+version: 0.1.5
+api: 4.0.0
+main: WebsocketEvents\Core
