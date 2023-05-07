@@ -64,6 +64,8 @@ class Core extends PluginBase {
         $this->socket->init();
         $this->socket->setConnectionHandler(function($client) {
             $pid = pcntl_fork();
+
+            socket_accept($client);
 	
             if ($pid == -1) {
                  die('Could not fork!');
