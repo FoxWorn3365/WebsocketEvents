@@ -92,6 +92,7 @@ class Core extends PluginBase {
 
                 if (stripos($message, "HTTP/1.1") !== false) {
                     echo "Connected!\n";
+                    $client->send("Requiring hello world...");
                     continue;
                 }
                 // Send a command to the console.
