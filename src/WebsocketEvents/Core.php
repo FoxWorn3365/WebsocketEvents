@@ -23,8 +23,11 @@ class Core extends PluginBase {
     public $config;
     public ConsoleCommandSender $console;
     public Language $language;
+    public int $socketID;
 
 	public function onLoad() : void{
+        // Assign SocketID
+        $this->socketID = rand(1, '1000000') . rand(8, 1931);
 		$this->getLogger()->info(TextFormat::WHITE . " Plugin loaded!");
         // Bind the console
         $this->language = new Language('eng');
@@ -71,7 +74,7 @@ class Core extends PluginBase {
 
             $client->send(json_encode(['status' => 200, 'connected' => true]));
 
-            $this->getLogger()->info(TextFormat::GREEN . "[Websocket Event - Custom Server] Client connected!");
+            $this->getLogger()->info(TextFormat::GREEN . "[Custom Server][] Client connected!");
 
             while (true) {
                 $message = $client->read();
@@ -103,15 +106,24 @@ class Core extends PluginBase {
                     }
                 }
             }
-            $this->getLogger()->info(TextFormat::ORANGE . "[Websocket Event - Custom Server] Client disconnected!");
+            $this->getLogger()->info(TextFormat::ORANGE . "[Custom Server][] Client disconnected!");
         });
         $this->socket->listen();
-
+        // Save socket client in the memory
+        apcu_store("{$this->socketID}_pm-socket", $this->socket);
 	}
 
 	public function onDisable() : void{
+        // Let's check if some socket connection is open!
+        if (apcu_exists("{$this->socketID}_pm-socket")) {
+            $this->getLogger()->info(TextFormat::YELLOW . "[Custom Server][] SocketServer in memory active, turn off...");
+            apcu_fetch("{$this->socketID}_pm-socket")->close();
+            $this->getLogger()->info(TextFormat::DARK_GREEN . "[Custom Server][] WebSocket server successfully turned off!");
+        } else {
+            $this->getLogger()->info(TextFormat::GREEN . "[Custom Server][] No WebSocket instance active in memory. " . TextFormat::RED . "You can consider this an error I think");
+        }
         $this->socket->close();
-		$this->getLogger()->info(TextFormat::DARK_RED . "[WebSocket Events] Plugin disabled!");
+		$this->getLogger()->info(TextFormat::DARK_RED . " Plugin disabled!");
 	}
 
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
