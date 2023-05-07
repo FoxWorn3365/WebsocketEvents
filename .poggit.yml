@@ -1,9 +1,8 @@
 --- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/FoxWorn3365/MobImplementation
 build-by-default: true
-branches:
-- build
+pulls: true
 projects: 
   WebsocketEvents:
-    icon: ""
-    libs: ""
+    type: plugin
+    model: default
 ...
