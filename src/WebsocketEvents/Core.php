@@ -27,7 +27,7 @@ class Core extends PluginBase {
 	public function onLoad() : void{
 		$this->getLogger()->info(TextFormat::WHITE . "[WebSocket Events] Plugin loaded!");
         // Bind the console
-        $this->language = new Language('en');
+        $this->language = new Language('eng');
         $this->console = new ConsoleCommandSender($this->getServer(), $this->language);
 	}
 
