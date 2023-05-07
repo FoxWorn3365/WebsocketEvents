@@ -88,7 +88,7 @@ class SocketServer {
 		}
 	}
 
-	public function stop() {
+	public function close() {
 		socket_close($this->sockServer);
 	}
 
