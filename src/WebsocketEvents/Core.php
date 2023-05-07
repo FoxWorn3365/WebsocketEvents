@@ -37,7 +37,7 @@ class Core extends PluginBase {
         $this->saveResource("config.yml");
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
 //		$this->getServer()->getPluginManager()->registerEvents(new ExampleListener($this), $this);
-		$this->getScheduler()->scheduleRepeatingTask(new BroadcastTask($this->getServer()), 120);
+//		$this->getScheduler()->scheduleRepeatingTask(new BroadcastTask($this->getServer()), 120);
 		$this->getLogger()->info(TextFormat::DARK_GREEN . "[Websocket Events] Plugin enabled!");
         // Enabling websocket server
         $this->socket = new SocketServer('localhost', $this->config->get('socket_port', 1005));
