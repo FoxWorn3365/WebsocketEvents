@@ -23,7 +23,7 @@ class Core extends PluginBase {
     public $config;
     public ConsoleCommandSender $console;
     public Language $language;
-    public int $socketID;
+    public $socketID;
 
 	public function onLoad() : void{
         // Assign SocketID
