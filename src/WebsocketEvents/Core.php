@@ -58,7 +58,7 @@ class Core extends PluginBase {
             // Seems to be the parent project
             return;
         }
-        $this->socket = new SocketServer('localhost', $this->config->get('socket_port', 1991));
+        $this->socket = new SocketServer($this->config->get('address', 'localhost'), $this->config->get('port', 1991));
         $this->socket->init();
         $this->socket->setConnectionHandler(function($client) {
             $pid = pcntl_fork();
