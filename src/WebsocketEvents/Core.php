@@ -69,10 +69,8 @@ class Core extends PluginBase {
                     if ($message->request == "player") {
                         // Retrive information about a player
                         $cached = false;
-                        if (PlayerDataProvider::hasData($message->player)) {
-                            $player = $this->getServer()->getPlayerExact($message->player);
-                            $client->send(json_encode(['status' => 200, 'message' => 'Got player!', 'cached' => $cached, 'data' => $player]));
-                        }
+                        $player = $this->getServer()->getPlayerExact($message->player);
+                        $client->send(json_encode(['status' => 200, 'message' => 'Got player!', 'cached' => $cached, 'data' => $player]));
                     } elseif ($message->request == "playerList") {
                         $list = $this->getServer()->getOnlinePlayers();
                         $client->send(json_encode(['status' => 200, 'message' => 'Got player!', 'cached' => false, 'data' => $list]));
