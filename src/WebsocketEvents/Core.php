@@ -88,12 +88,12 @@ class Core extends PluginBase {
                     continue;
                 }
 
-                if (stripos($messgae, "HTTP/1.1") !== false) {
+                echo "Received message! - {$message}\n";
+
+                if (stripos($message, "HTTP/1.1") !== false) {
                     echo "Connected!\n";
                     continue;
                 }
-
-                echo "Received message! - {$message}\n";
                 // Send a command to the console.
                 // WAIT! Let's see the type! if it's get SO we need to send the user's informations!
                 $message = json_decode($message);
