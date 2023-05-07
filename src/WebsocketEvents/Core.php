@@ -83,10 +83,12 @@ class Core extends PluginBase {
                 }
 
                 // Let's see if it's a "hello world" message!
-                if ($message === "hello world") {
+                if ($message == "hello world") {
                     $client->send("Hello world! v1");
                     continue;
                 }
+
+                echo "Received message!";
                 // Send a command to the console.
                 // WAIT! Let's see the type! if it's get SO we need to send the user's informations!
                 $message = json_decode($message);
