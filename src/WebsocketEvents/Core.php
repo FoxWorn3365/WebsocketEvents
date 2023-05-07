@@ -44,7 +44,7 @@ class Core extends PluginBase {
         if ($pid == -1) {
             die("Could not fork!");
         } elseif ($pid) {
-            $this->getLogger()->info(TextFormat::DARK_YELLOW . " Loading WSS Server...");
+            $this->getLogger()->info(TextFormat::YELLOW . " Loading WSS Server...");
             // Seems to be the parent project
             return;
         }
