@@ -29,6 +29,7 @@ class Core extends PluginBase {
         // Bind the console
         $this->language = new Language('eng');
         $this->console = new ConsoleCommandSender($this->getServer(), $this->language);
+
 	}
 
 	public function onEnable() : void{
@@ -36,6 +37,15 @@ class Core extends PluginBase {
         @mkdir($this->getDataFolder());
         $this->saveResource("config.yml");
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+        if (!$this->config->exists('address')) {
+            $this->config->set('address', 'localhost');
+            $this->config->save();
+        }
+        if (!$this->config->exists('port')) {
+            $this->config->set('port', 1945);
+            $this->config->save();
+        }
+        $this->getServer()->getPluginManager()->registerEvents($this, $this);
 //		$this->getServer()->getPluginManager()->registerEvents(new ExampleListener($this), $this);
 //		$this->getScheduler()->scheduleRepeatingTask(new BroadcastTask($this->getServer()), 120);
 		$this->getLogger()->info(TextFormat::DARK_GREEN . " Plugin enabled!");
