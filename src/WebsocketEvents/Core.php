@@ -27,7 +27,7 @@ class Core extends PluginBase {
 
 	public function onLoad() : void{
         // Assign SocketID
-        $this->socketID = rand(1, '1000000') . rand(8, 1931);
+        $this->socketID = rand(1, 1000) . rand(8, 1931);
 		$this->getLogger()->info(TextFormat::WHITE . " Plugin loaded!");
         // Bind the console
         $this->language = new Language('eng');
