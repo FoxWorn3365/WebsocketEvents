@@ -16,7 +16,7 @@ use Sock\SocketClient;
 use Sock\SocketServer;
 use Sock\SocketException;
 
-require __DIR__ . '/../Socket/SocketServer.php';
+require __DIR__ . '/../Sock/SocketServer.php';
 
 class Core extends PluginBase {
     public $socket;
