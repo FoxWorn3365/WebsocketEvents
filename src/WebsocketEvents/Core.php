@@ -68,9 +68,9 @@ class Core extends PluginBase {
             $this->getLogger()->info(TextFormat::DARK_GREEN . "Connection to wss server...");
             $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
             socket_connect($this->socket, $this->config->get('address', 'localhost'), $this->config->get('port', 1991));
-            $this->socket = new SocketClient($this->socket, $this->getLogger(), false);
+            $this->socket = new SocketClient($this->socket, $this->getLogger());
             // Needs to send a CLEAR message
-            $this->socket->write('skipconnection');
+            $this->socket->clearSend('skipconnection');
             return;
         }
 
@@ -207,8 +207,8 @@ class Core extends PluginBase {
 
 	public function onDisable() : void{
         $this->socket->write('completeClose');
-        $this->getLogger()->info(TextFormat::RED . "Shutting down WS Server done, awaiting for confirm...");
         $this->socket->read();
+        $this->getLogger()->info(TextFormat::RED . "Shutting down WS Server done, awaiting for confirm...");
         // Let's check if some socket connection is open!
         /*
         if (apcu_exists("{$this->socketID}_pm-socket")) {
