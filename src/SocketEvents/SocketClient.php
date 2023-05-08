@@ -6,7 +6,7 @@ class SocketClient {
     protected $client;
     protected bool $connected;
     protected $message;
-    protected $id;
+    public $id;
 
     function __construct(\Socket $connection) {
         $this->client = $connection;
