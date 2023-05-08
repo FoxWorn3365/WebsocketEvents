@@ -212,6 +212,7 @@ class Core extends PluginBase {
 	}
 
 	public function onDisable() : void{
+        $this->socket->needsMask = true; //Values replacement, just in case
         $this->socket->clearSend('completeClose');
         $this->socket->read();
         $this->getLogger()->info(TextFormat::RED . "Shutting down WS Server done, awaiting for confirm...");
