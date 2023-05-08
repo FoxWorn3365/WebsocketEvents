@@ -17,7 +17,7 @@ class SocketClient {
     }
 
     public function write(string $message) : void {
-        if (!socket_send($this->client, $message, strlen($message))) {
+        if (!socket_write($this->client, $message, strlen($message))) {
             $this->close();
         }
     }
