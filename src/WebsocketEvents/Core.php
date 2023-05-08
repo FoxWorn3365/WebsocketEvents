@@ -68,7 +68,7 @@ class Core extends PluginBase {
             $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
             socket_connect($this->socket, $this->config->get('address', 'localhost'), $this->config->get('port', 1991));
             $this->socket = new SocketClient($this->socket, $this->getLogger());
-            $this->socket->write($this->socket, 'skipconnection', strlen('skipconnection'));
+            $this->socket->write('skipconnection');
             return;
         }
 
@@ -192,7 +192,7 @@ class Core extends PluginBase {
 	}
 
 	public function onDisable() : void{
-        $this->socket->write($this->socket, 'completeClose', strlen('completeClose'));
+        $this->socket->write('completeClose');
         // Let's check if some socket connection is open!
         /*
         if (apcu_exists("{$this->socketID}_pm-socket")) {
