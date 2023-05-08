@@ -139,7 +139,6 @@ class Core extends PluginBase {
                     $client->send('Hello world');
                     continue;
                 } elseif ($message == 'close') {
-                    $client->send('Closing...');
                     $client->close();
                     $connected = false;
                     unset($client);
@@ -148,6 +147,12 @@ class Core extends PluginBase {
                     socket_write($client, $response, strlen($response));
                     socket_close($client);
                     */
+                    break;
+                } elseif ($message == 'completeClose') {
+                    $client->close();
+                    socket_close($this->server);
+                    $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Closed ALL istances of WebSocket Server - Custom v13");
+                    $connection = false;
                     break;
                 }
 
