@@ -11,7 +11,7 @@ class SocketClientManager {
         $this->disconnectOnError = $disconnectOnError;
     }
 
-    public function send(string $message) : bool|void {
+    public function send(string $message) {
         if (!socket_send($this->client, $message, strlen($message)) && $this->disconnectOnError) {
             socket_close($this->client);
             $this->client = null;
