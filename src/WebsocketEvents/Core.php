@@ -66,7 +66,7 @@ class Core extends PluginBase {
             sleep(2);
             $this->getLogger()->info(TextFormat::DARK_GREEN . " Connection to wss server...");
             $this->socket = socket_connect(socket_create(AF_INET, SOCK_STREAM, SOL_TCP), $this->config->get('address', 'localhost'), $this->config->get('port', 1991));
-
+            socket_write($this->socket, 'skipconnection', strlen('skipconnection'));
             return;
         }
 
@@ -78,7 +78,9 @@ class Core extends PluginBase {
             $request = socket_read($client, 5000);
             $client = new SocketClient($client, $this->getLogger());
             $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] New connection to server by Client {$client->id} v13");
-            $client->accept($request);
+            if ($request != 'skipconnection') {
+                $client->accept($request);
+            }
             /*
             $user->onMessage(function(?string $message, SocketClient $user) {
                 $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$user->id}: {$message}");
