@@ -75,7 +75,7 @@ class Core extends PluginBase {
             $client = socket_accept($this->server);
             $this->clients[] = $client;
             $pog = pcntl_fork();
-            if ($pid) {
+            if ($pog) {
                 $this->getLogger()->info(TextFormat::GRAY . " Connection received, restarting WSS listen...");
                 continue;
             }
