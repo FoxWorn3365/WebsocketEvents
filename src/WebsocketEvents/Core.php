@@ -12,6 +12,9 @@ use pocketmine\utils\Config;
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\lang\Language;
 use pocketmine\player\PlayerDataProvider;
+use SocketEvents\SocketClient;
+
+require '../SocketEvents/SocketClient.php';
 
 class Core extends PluginBase {
     protected $server;
@@ -70,6 +73,30 @@ class Core extends PluginBase {
             $client = socket_accept($this->server);
             // Accept connection
             $request = socket_read($client, 5000);
+            $user = new SocketClient($client);
+            $user->accept($request);
+            $user->on('message', function(?string $message, SocketClient $user) {
+                $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$user->id}: {$message}");
+                // Received a message, elaborate this!
+                if ($message == 'hello world') {
+                    $user->send('Hello world v1.2 - SocketStream!');
+                    continue;
+                } elseif ($message == 'close') {
+                    $response = 'Closing client session...';
+                    $user->send('Closing client session...')
+                    $user->close();
+                    break;
+                }
+
+                if ($data = @json_decode($message) === false || $data = @json_decode($message) === null) {
+                    $user->send('Unknow manager!');
+                    $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client " . count($this->clients)-1 . " sent an invalid message!");
+                    continue;
+                }
+
+                $user->send('I love u');
+            });
+            /*
             preg_match('#Sec-WebSocket-Key: (.*)\r\n#', $request, $matches);
             $key = base64_encode(pack(
                 'H*',
@@ -117,6 +144,8 @@ class Core extends PluginBase {
                 $response = 'Valid JSON';
                 socket_write($client, $response, strlen($response));
             }
+            */
+
         }
         // Save socket client in the memory
         //apcu_store("{$this->socketID}_pm-socket", $this->socket);
