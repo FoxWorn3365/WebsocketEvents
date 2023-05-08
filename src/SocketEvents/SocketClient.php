@@ -42,7 +42,7 @@ class SocketClient {
         $this->id = rand(10, 1000) . rand(10, 1000);
     }
 
-    protected function loop(int $lenght = 1024) {
+    public function loop(int $lenght = 1024) {
         while ($this->connected) {
             $msg = socket_read($this->client, $lenght);
             $this->message($msg, $this);
