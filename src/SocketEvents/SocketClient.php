@@ -7,10 +7,12 @@ class SocketClient {
     protected bool $connected;
     public $message;
     public $id;
+    public $log
 
-    function __construct(\Socket $connection) {
+    function __construct(\Socket $connection, $log) {
         $this->id = rand(10, 1000) . rand(10, 1000);
         $this->client = $connection;
+        $this->log = $log;
     }
 
     public function onMessage(callable $callback) : void {
@@ -94,6 +96,8 @@ class SocketClient {
 
     public function close() {
         $this->connected = false;
+        $log->info(TextFormat::GRAY . "[CustomServer][I] User {$this->id} disconnected!");
         socket_close($this->client); 
+        $this = null;
     }
 }
