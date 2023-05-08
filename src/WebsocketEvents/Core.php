@@ -12,9 +12,6 @@ use pocketmine\utils\Config;
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\lang\Language;
 use pocketmine\player\PlayerDataProvider;
-use FoxSocket\SocketClientManager;
-
-require __DIR__ . '/../FoxSockets/SocketManager.php';
 
 class Core extends PluginBase {
     protected $server;
