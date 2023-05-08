@@ -89,7 +89,7 @@ class Core extends PluginBase {
                 $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$clientID}: {$message}");
                 // Received a message, elaborate this!
                 if ($message == 'hello world') {
-                    $response = 'Hello world v1!';
+                    $response = 'Hello world v1.2 - SocketStream!';
                     socket_write($this->clients[$clientID], $response, strlen($response));
                     continue;
                 } elseif ($message == 'close') {
