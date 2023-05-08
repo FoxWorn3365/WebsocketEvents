@@ -72,7 +72,7 @@ class Core extends PluginBase {
         socket_listen($this->server);
         $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] WSS CustomServer1 started!");
         while (true) {
-            $client = socket_accept($this->server);
+            $client = stream_socket_accept($this->server);
             $this->clients[] = $client;
             $pog = pcntl_fork();
             if ($pog) {
@@ -100,6 +100,7 @@ class Core extends PluginBase {
                 if ($data = @json_decode($message) === false || $data = @json_decode($message) === null) {
                     $response = 'Unknow manager';
                     socket_write($this->clients[$clientID], $response, strlen($response));
+                    $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client " . count($this->clients)-1 . " sent an invalid message!");
                     continue;
                 }
 
