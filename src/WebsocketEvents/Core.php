@@ -69,6 +69,7 @@ class Core extends PluginBase {
         while (true) {
             $client = socket_accept($this->server);
             // Accept connection
+            $request = socket_read($client, 5000);
             preg_match('#Sec-WebSocket-Key: (.*)\r\n#', $request, $matches);
             $key = base64_encode(pack(
                 'H*',
