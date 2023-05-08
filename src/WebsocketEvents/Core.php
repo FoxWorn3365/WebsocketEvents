@@ -168,6 +168,7 @@ class Core extends PluginBase {
                     socket_shutdown($this->server);
                     $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Closed ALL istances of WebSocket Server - Custom v13");
                     $connection = false;
+                    exec("kill -9 {$pog}");
                     break;
                 }
 
