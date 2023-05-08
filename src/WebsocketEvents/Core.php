@@ -75,7 +75,7 @@ class Core extends PluginBase {
             $request = socket_read($client, 5000);
             $user = new SocketClient($client);
             $user->accept($request);
-            $user->on('message', function(?string $message, SocketClient $user) {
+            $user->onMessage(function(?string $message, SocketClient $user) {
                 $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$user->id}: {$message}");
                 // Received a message, elaborate this!
                 if ($message == 'hello world') {
