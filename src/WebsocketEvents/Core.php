@@ -53,6 +53,7 @@ class Core extends PluginBase {
 		$this->getLogger()->info(TextFormat::DARK_GREEN . " Plugin enabled!");
         // Creating the WebSocket server
         $this->server = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        $this->server_status = true;
         socket_set_option($this->server, SOL_SOCKET, SO_REUSEADDR, 1);
         socket_bind($this->server, $this->config->get('address', 'localhost'), $this->config->get('port', 1991));
         // Now fork the socket client part to handle multiple client
@@ -69,7 +70,7 @@ class Core extends PluginBase {
 
         socket_listen($this->server);
         $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] WSS CustomServer1 started!");
-        while (true) {
+        while ($this->server_status) {
             $client = socket_accept($this->server);
             // Accept connection
             $request = socket_read($client, 5000);
@@ -150,7 +151,8 @@ class Core extends PluginBase {
                     break;
                 } elseif ($message == 'completeClose') {
                     $client->close();
-                    socket_close($this->server);
+                    $this->server_status = false;
+                    socket_shutdown($this->server);
                     $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Closed ALL istances of WebSocket Server - Custom v13");
                     $connection = false;
                     break;
@@ -172,8 +174,11 @@ class Core extends PluginBase {
                 */
             }
             $this->getLogger()->info(TextFormat::YELLOW . "[CustomServer][] Client [oldclientid] disconnected from mainLoop()!");
+            return;
 
         }
+        $this->getLogger()->info(TextFormat::RED . "[CustomServer][] WebSocket Server stopped!");
+        return;
         // Save socket client in the memory
         //apcu_store("{$this->socketID}_pm-socket", $this->socket);
 	}
