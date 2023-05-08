@@ -7,7 +7,7 @@ class SocketClient {
     protected bool $connected;
     public $message;
     public $id;
-    public $log
+    public $log;
 
     function __construct(\Socket $connection, $log) {
         $this->id = rand(10, 1000) . rand(10, 1000);
