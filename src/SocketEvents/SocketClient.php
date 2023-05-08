@@ -60,6 +60,12 @@ class SocketClient {
         }
     }
 
+    public function clearSend(string $message) : void {
+        if (!socket_send($this->client, $message, strlen($message), 0)) {
+            $this->close();
+        }
+    }
+
     public function send(string $message) : void {
         $this->write($message);
     }
@@ -75,7 +81,7 @@ class SocketClient {
         $headers .= "Connection: Upgrade\r\n";
         $headers .= "Sec-WebSocket-Version: 13\r\n";
         $headers .= "Sec-WebSocket-Accept: {$key}\r\n\r\n";
-        $this->send($headers);
+        $this->clearSend($headers);
         $this->connected = true;
     }
 
