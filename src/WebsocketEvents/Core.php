@@ -19,6 +19,8 @@ use Sock\SocketException;
 require __DIR__ . '/../Sock/SocketServer.php';
 
 class Core extends PluginBase {
+    protected $server;
+    protected ?array $clients = [];
     public $socket;
     public $config;
     public ConsoleCommandSender $console;
@@ -51,74 +53,60 @@ class Core extends PluginBase {
 //		$this->getServer()->getPluginManager()->registerEvents(new ExampleListener($this), $this);
 //		$this->getScheduler()->scheduleRepeatingTask(new BroadcastTask($this->getServer()), 120);
 		$this->getLogger()->info(TextFormat::DARK_GREEN . " Plugin enabled!");
-        // Enabling websocket server - ASYNC WAY
+        // Creating the WebSocket server
+        $this->server = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        socket_set_option($this->server, SOL_SOCKET, SO_REUSEADDR, 1);
+        socket_bind($this->server, $this->config->get('address', 'localhost'), $this->config->get('port', 1991));
+        // Now fork the socket client part to handle multiple client
         $pid = pcntl_fork();
+
         if ($pid == -1) {
-            die("Could not fork!");
+            die("Cannot fork!");
         } elseif ($pid) {
             $this->getLogger()->info(TextFormat::YELLOW . " Loading WSS Server...");
-            // Seems to be the parent project
+            sleep(2);
+            $this->getLogger()->info(TextFormat::DARK_GREEN . " Connection to wss server...");
             return;
         }
-        $this->socket = new SocketServer($this->config->get('address', 'localhost'), $this->config->get('port', 1991));
-        $this->socket->init();
-        $this->socket->setConnectionHandler(function($client) {
-            $pid = pcntl_fork();
 
-            socket_accept($client);
-	
-            if ($pid == -1) {
-                 die('Could not fork!');
-            } else if ($pid) {
-                // parent process
-                return;
+        socket_listen($this->server);
+        $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] WSS CustomServer1 started!");
+        while (true) {
+            $client = socket_accept($this->server);
+            $this->clients[] = $client;
+            $pog = pcntl_fork();
+            if ($pid) {
+                $this->getLogger()->info(TextFormat::GRAY . " Connection received, restarting WSS listen...");
+                continue;
             }
-
-            $client->send(json_encode(['status' => 200, 'connected' => true]));
-
-            $this->getLogger()->info(TextFormat::GREEN . "[Custom Server][] Client connected!");
-
+            $this->getLogger()->info(TextFormat::GRAY . " Client " . count($this->clients) . " conected");
+            $clientID = count($this->clients);
+            // Client management - Main fork and listen activated
             while (true) {
-                $message = $client->read();
-                if ($message == '') {
+                $message = socket_read( $this->connection, 10024, PHP_BINARY_READ);
+                // Received a message, elaborate this!
+                if ($message == 'hello world') {
+                    $response = 'Hello world v1!';
+                    socket_write($this->clients[$clientID], $response, strlen($response));
+                    continue;
+                } elseif ($message == 'close') {
+                    $response = 'Closing client session...';
+                    socket_write($this->clients[$clientID], $response, strlen($response));
+                    socket_close($this->clients[$clientID]);
+                    break;
+                }
+
+                if ($data = @json_decode($message) === false || $data = @json_decode($message) === null) {
+                    $response = 'Unknow manager';
+                    socket_write($this->clients[$clientID], $response, strlen($response));
                     continue;
                 }
 
-                // Let's see if it's a "hello world" message!
-                if ($message == "hello world") {
-                    $client->send("Hello world! v1");
-                    continue;
-                }
-
-                echo "Received message! - {$message}\n";
-
-                if (stripos($message, "HTTP/1.1") !== false) {
-                    echo "Connected!\n";
-                    $client->send("Requiring hello world...");
-                    continue;
-                }
-                // Send a command to the console.
-                // WAIT! Let's see the type! if it's get SO we need to send the user's informations!
-                $message = json_decode($message);
-    
-                if ($message->type == "GET") {
-                    if ($message->request == "player") {
-                        // Retrive information about a player
-                        $cached = false;
-                        $player = $this->getServer()->getPlayerExact($message->player);
-                        $client->send(json_encode(['status' => 200, 'message' => 'Got player!', 'cached' => $cached, 'data' => $player]));
-                    } elseif ($message->request == "playerList") {
-                        $list = $this->getServer()->getOnlinePlayers();
-                        $client->send(json_encode(['status' => 200, 'message' => 'Got player!', 'cached' => false, 'data' => $list]));
-                    } elseif ($message->request == "custom") {
-                        $data = $this->getServer()->{$message->function}($message->arguments);
-                        $client->send(json_encode(['status' => 200, 'message' => 'Got player!', 'cached' => false, 'data' => $data]));
-                    }
-                }
+                // Callback
+                $response = 'Valid JSON';
+                socket_write($this->clients[$clientID], $response, strlen($response));
             }
-            $this->getLogger()->info(TextFormat::ORANGE . "[Custom Server][] Client disconnected!");
-        });
-        $this->socket->listen();
+        }
         // Save socket client in the memory
         //apcu_store("{$this->socketID}_pm-socket", $this->socket);
 	}
