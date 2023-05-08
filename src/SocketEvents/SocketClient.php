@@ -57,6 +57,10 @@ class SocketClient {
         return $this->unmask(socket_read($this->client, $lenght, PHP_BINARY_READ));
     }
 
+    public function translate(string $text) : string {
+        return $this->unmask($text);
+    }
+
     public function write(string $message) : void {
         $message = $this->mask($message);
         if (!socket_send($this->client, $message, strlen($message), 0)) {

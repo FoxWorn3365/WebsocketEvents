@@ -80,7 +80,7 @@ class Core extends PluginBase {
             $request = socket_read($client, 5000);
             $client = new SocketClient($client, $this->getLogger());
             $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] New connection to server by Client {$client->id} v13");
-            if ($request != 'skipconnection') {
+            if ($client->translate($request) != 'skipconnection') {
                 $client->accept($request);
             }
             /*
