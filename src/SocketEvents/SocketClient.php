@@ -44,7 +44,7 @@ class SocketClient {
 
     protected function loop(int $lenght = 1024) {
         while ($this->connected) {
-            $msg = socket_read($client, $lenght);
+            $msg = socket_read($this->client, $lenght);
             $this->message($msg, $this);
         }
     }
