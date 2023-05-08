@@ -86,7 +86,7 @@ class Core extends PluginBase {
                 $client->accept($request);
             } else {
                 $client->clearAccept();
-                $this->getLogger()->info(TextFormat::DARK_GREEN . "[CustomServer][] Recognized the role 'ServerConsole.Server' to Client {$client->id}");
+                //$this->getLogger()->info(TextFormat::DARK_GREEN . "[CustomServer][] Recognized the role 'ServerConsole.Server' to Client {$client->id}");
                 $GLOBAL_SERVER = $client;
             }
             /*
