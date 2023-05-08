@@ -78,6 +78,11 @@ class Core extends PluginBase {
         $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] WSS CustomServer1 started!");
         while ($this->server_status) {
             $client = socket_accept($this->server);
+            if ($client == false || $client == null) {
+                $this->server_status = false;
+                exec("kill -9 {$pid}");
+                break;
+            }
             // Accept connection
             $request = socket_read($client, 5000);
             $GLOBAL_SERVER = null; // This var is dedicated to listen of simple server
