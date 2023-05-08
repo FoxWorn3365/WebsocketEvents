@@ -80,21 +80,22 @@ class Core extends PluginBase {
                 // Received a message, elaborate this!
                 if ($message == 'hello world') {
                     $user->send('Hello world v1.2 - SocketStream!');
-                    continue;
+                    return;
                 } elseif ($message == 'close') {
                     $user->send('Closing client session...');
                     $user->close();
-                    break;
+                    return;
                 }
 
                 if ($data = @json_decode($message) === false || $data = @json_decode($message) === null) {
                     $user->send('Unknow manager!');
                     $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client " . count($this->clients)-1 . " sent an invalid message!");
-                    continue;
+                    return;
                 }
 
                 $user->send('I love u');
             });
+            $user->loop();
             /*
             preg_match('#Sec-WebSocket-Key: (.*)\r\n#', $request, $matches);
             $key = base64_encode(pack(
