@@ -92,7 +92,7 @@ class Core extends PluginBase {
             $clientID = count($this->clients)-1;
             // Client management - Main fork and listen activated
             while (true) {
-                $message = socket_read($client, 10024, PHP_NORMAL_READ);
+                $message = socket_read($client, 1024);
                 $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$clientID}: {$message}");
                 // Received a message, elaborate this!
                 if ($message == 'hello world') {
