@@ -126,6 +126,7 @@ class Core extends PluginBase {
                 $message = $client->read(2048);
                 $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$client->id}: {$message}");
                 // Received a message, elaborate this!
+                $client->send('')
                 if ($message == 'hello world') {
                     /*
                     $response = 'Hello world v1.2 - SocketStream!';
@@ -148,7 +149,7 @@ class Core extends PluginBase {
                     //$response = 'Unknow manager';
                     //socket_write($client, $response, strlen($response));
                     $client->send('Invalid!');
-                    $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client " . count($this->clients)-1 . " sent an invalid message!");
+                    $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client {$client->id} sent an invalid message!");
                     continue;
                 }
 
