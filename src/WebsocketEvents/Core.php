@@ -79,8 +79,8 @@ class Core extends PluginBase {
                 $this->getLogger()->info(TextFormat::GRAY . " Connection received, restarting WSS listen...");
                 continue;
             }
-            $this->getLogger()->info(TextFormat::GRAY . " Client " . count($this->clients) . " conected");
-            $clientID = count($this->clients);
+            $this->getLogger()->info(TextFormat::GRAY . " Client " . count($this->clients)-1 . " conected");
+            $clientID = count($this->clients)-1;
             // Client management - Main fork and listen activated
             while (true) {
                 $message = socket_read( $this->connection, 10024, PHP_BINARY_READ);
