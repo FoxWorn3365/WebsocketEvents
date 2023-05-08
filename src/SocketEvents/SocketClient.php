@@ -93,6 +93,11 @@ class SocketClient {
         $this->connected = true;
     }
 
+    public function clearAccept() : void {
+        $this->clearSend('connected!');
+        $this->connected = true;
+    }
+
     public function loop(int $lenght = 1024) {
         while ($this->connected) {
             $msg = socket_read($this->client, $lenght);
