@@ -143,6 +143,12 @@ class Core extends PluginBase {
             $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client {$client->id} conected");
             // Client management - Main fork and listen activated
             while ($connection) {
+                /*
+                if ($client->id == $GLOBAL_SERVER) {
+                    $this->needsMask = false;
+                    $message = socket_read($)
+                }
+                */
                 $message = $client->read(20048);
                 if ($message == false) {
                     $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client {$client->id} Disconnected!");
