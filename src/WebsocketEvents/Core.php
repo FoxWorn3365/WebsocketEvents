@@ -141,6 +141,7 @@ class Core extends PluginBase {
                 } elseif ($message == 'close') {
                     $client->send('Closing...');
                     $client->close();
+                    unset($client);
                     /*
                     $response = 'Closing client session...';
                     socket_write($client, $response, strlen($response));
@@ -164,6 +165,7 @@ class Core extends PluginBase {
                 socket_write($client, $response, strlen($response));
                 */
             }
+            $this->getLogger()->info(TextFormat::ORANGE . "[CustomServer][] Client {$client->id} disconnected from mainLoop()!");
 
         }
         // Save socket client in the memory
