@@ -76,15 +76,15 @@ class Core extends PluginBase {
             $this->clients[] = $client;
             $pog = pcntl_fork();
             if ($pog) {
-                $this->getLogger()->info(TextFormat::GRAY . " Connection received, restarting WSS listen...");
+                $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Connection received, restarting WSS listen...");
                 continue;
             }
-            $this->getLogger()->info(TextFormat::GRAY . " Client " . count($this->clients)-1 . " conected");
+            $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client " . count($this->clients)-1 . " conected");
             $clientID = count($this->clients)-1;
             // Client management - Main fork and listen activated
             while (true) {
                 $message = socket_read($this->clients[$clientID], 10024, PHP_BINARY_READ);
-                $this->getLogger()->info(TextFormat::LIGHT_GRAY . " SocketMessage from Client {$clientID}: {$message}");
+                $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$clientID}: {$message}");
                 // Received a message, elaborate this!
                 if ($message == 'hello world') {
                     $response = 'Hello world v1!';
