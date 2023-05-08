@@ -65,7 +65,8 @@ class Core extends PluginBase {
             $this->getLogger()->info(TextFormat::YELLOW . " Loading WSS Server...");
             sleep(2);
             $this->getLogger()->info(TextFormat::DARK_GREEN . " Connection to wss server...");
-            $this->socket = socket_connect(socket_create(AF_INET, SOCK_STREAM, SOL_TCP), $this->config->get('address', 'localhost'), $this->config->get('port', 1991));
+            $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+            socket_connect($this->socket, $this->config->get('address', 'localhost'), $this->config->get('port', 1991));
             socket_write($this->socket, 'skipconnection', strlen('skipconnection'));
             return;
         }
