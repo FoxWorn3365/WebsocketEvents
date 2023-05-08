@@ -72,7 +72,9 @@ class Core extends PluginBase {
         socket_listen($this->server);
         $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] WSS CustomServer1 started!");
         while (true) {
-            $client = stream_socket_accept($this->server);
+            $client = socket_accept($this->server);
+            socket_write($this->clients[$clientID], 'Connected!', strlen('Connected!'));
+
             $this->clients[] = $client;
             $pog = pcntl_fork();
             if ($pog) {
