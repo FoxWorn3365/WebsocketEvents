@@ -166,7 +166,7 @@ class Core extends PluginBase {
                 socket_write($client, $response, strlen($response));
                 */
             }
-            $this->getLogger()->info(TextFormat::ORANGE . "[CustomServer][] Client {$client->id} disconnected from mainLoop()!");
+            $this->getLogger()->info(TextFormat::YELLOW . "[CustomServer][] Client [oldclientid] disconnected from mainLoop()!");
 
         }
         // Save socket client in the memory

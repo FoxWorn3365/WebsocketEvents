@@ -2,6 +2,8 @@
 
 namespace SocketEvents;
 
+use pocketmine\utils\TextFormat;
+
 class SocketClient {
     protected $client;
     protected bool $connected;
@@ -96,7 +98,7 @@ class SocketClient {
 
     public function close() {
         $this->connected = false;
-        $log->info(TextFormat::GRAY . "[CustomServer][I] User {$this->id} disconnected!");
+        $this->log->info(TextFormat::GRAY . "[CustomServer][I] User {$this->id} disconnected!");
         socket_close($this->client); 
     }
 }
