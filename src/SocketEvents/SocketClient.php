@@ -12,7 +12,7 @@ class SocketClient {
     public $log;
     public bool $needsMask;
 
-    function __construct(\Socket $connection, $log, bool $needsMask = true) {
+    function __construct(\Socket $connection, $log, bool $needsMask = false) {
         $this->id = rand(10, 1000) . rand(10, 1000);
         $this->client = $connection;
         $this->log = $log;
