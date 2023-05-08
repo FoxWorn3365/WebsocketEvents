@@ -85,30 +85,30 @@ class Core extends PluginBase {
             $clientID = count($this->clients)-1;
             // Client management - Main fork and listen activated
             while (true) {
-                $message = socket_read($this->clients[$clientID], 10024, PHP_BINARY_READ);
+                $message = socket_read($client, 10024, PHP_BINARY_READ);
                 $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$clientID}: {$message}");
                 // Received a message, elaborate this!
                 if ($message == 'hello world') {
                     $response = 'Hello world v1.2 - SocketStream!';
-                    socket_write($this->clients[$clientID], $response, strlen($response));
+                    socket_write($client, $response, strlen($response));
                     continue;
                 } elseif ($message == 'close') {
                     $response = 'Closing client session...';
-                    socket_write($this->clients[$clientID], $response, strlen($response));
-                    socket_close($this->clients[$clientID]);
+                    socket_write($client, $response, strlen($response));
+                    socket_close($client);
                     break;
                 }
 
                 if ($data = @json_decode($message) === false || $data = @json_decode($message) === null) {
                     $response = 'Unknow manager';
-                    socket_write($this->clients[$clientID], $response, strlen($response));
+                    socket_write($client, $response, strlen($response));
                     $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client " . count($this->clients)-1 . " sent an invalid message!");
                     continue;
                 }
 
                 // Callback
                 $response = 'Valid JSON';
-                socket_write($this->clients[$clientID], $response, strlen($response));
+                socket_write($client, $response, strlen($response));
             }
         }
         // Save socket client in the memory
