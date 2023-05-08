@@ -14,7 +14,7 @@ use pocketmine\lang\Language;
 use pocketmine\player\PlayerDataProvider;
 use SocketEvents\SocketClient;
 
-require '../SocketEvents/SocketClient.php';
+require __DIR__ . '../SocketEvents/SocketClient.php';
 
 class Core extends PluginBase {
     protected $server;
