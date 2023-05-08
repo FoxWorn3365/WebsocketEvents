@@ -9,11 +9,16 @@ class SocketClient {
     public $id;
 
     function __construct(\Socket $connection) {
+        $this->id = rand(10, 1000) . rand(10, 1000);
         $this->client = $connection;
     }
 
     public function onMessage(callable $callback) : void {
         $this->message = $callback;
+    }
+
+    public function read(int $lenght = 1024) : ?string {
+        return socket_read($this->client, $lenght);
     }
 
     public function write(string $message) : void {
@@ -39,7 +44,6 @@ class SocketClient {
         $headers .= "Sec-WebSocket-Accept: {$key}\r\n\r\n";
         $this->send($headers);
         $this->connected = true;
-        $this->id = rand(10, 1000) . rand(10, 1000);
     }
 
     public function loop(int $lenght = 1024) {

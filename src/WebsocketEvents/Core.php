@@ -73,9 +73,10 @@ class Core extends PluginBase {
             $client = socket_accept($this->server);
             // Accept connection
             $request = socket_read($client, 5000);
-            $user = new SocketClient($client);
-            $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] New connection to server by Client {$user->id} v13");
-            $user->accept($request);
+            $client = new SocketClient($client);
+            $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] New connection to server by Client {$client->id} v13");
+            $client->accept($request);
+            /*
             $user->onMessage(function(?string $message, SocketClient $user) {
                 $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$user->id}: {$message}");
                 // Received a message, elaborate this!
@@ -97,6 +98,7 @@ class Core extends PluginBase {
                 $user->send('I love u');
             });
             $user->loop();
+            */
             /*
             preg_match('#Sec-WebSocket-Key: (.*)\r\n#', $request, $matches);
             $key = base64_encode(pack(
@@ -109,43 +111,54 @@ class Core extends PluginBase {
             $headers .= "Sec-WebSocket-Version: 13\r\n";
             $headers .= "Sec-WebSocket-Accept: {$key}\r\n\r\n";
             socket_write($client, $headers, strlen($headers));
-
+            
             $this->clients[] = $client;
+            */
+
             $pog = pcntl_fork();
             if ($pog) {
                 $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Connection received, restarting WSS listen...");
                 continue;
             }
-            $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client " . count($this->clients)-1 . " conected");
-            $clientID = count($this->clients)-1;
+            $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client {$client->id} conected");
             // Client management - Main fork and listen activated
             while (true) {
-                $message = socket_read($client, 1024);
-                $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$clientID}: {$message}");
+                $message = $client->read(2048);
+                $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$client->id}: {$message}");
                 // Received a message, elaborate this!
                 if ($message == 'hello world') {
+                    /*
                     $response = 'Hello world v1.2 - SocketStream!';
                     socket_write($client, $response, strlen($response));
+                    */
+                    $client->send('Hello world');
                     continue;
                 } elseif ($message == 'close') {
+                    $client->send('Closing...');
+                    $client->close();
+                    /*
                     $response = 'Closing client session...';
                     socket_write($client, $response, strlen($response));
                     socket_close($client);
+                    */
                     break;
                 }
 
                 if ($data = @json_decode($message) === false || $data = @json_decode($message) === null) {
-                    $response = 'Unknow manager';
-                    socket_write($client, $response, strlen($response));
+                    //$response = 'Unknow manager';
+                    //socket_write($client, $response, strlen($response));
+                    $client->send('Invalid!');
                     $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client " . count($this->clients)-1 . " sent an invalid message!");
                     continue;
                 }
 
                 // Callback
+                $client->send('Valid JSON');
+                /*
                 $response = 'Valid JSON';
                 socket_write($client, $response, strlen($response));
+                */
             }
-            */
 
         }
         // Save socket client in the memory
