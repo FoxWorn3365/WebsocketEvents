@@ -5,7 +5,7 @@ namespace SocketEvents;
 class SocketClient {
     protected $client;
     protected bool $connected;
-    public $message;
+    public callable $message;
     public $id;
 
     function __construct(\Socket $connection) {
@@ -45,7 +45,7 @@ class SocketClient {
     public function loop(int $lenght = 1024) {
         while ($this->connected) {
             $msg = socket_read($this->client, $lenght);
-            $this->message($msg, $this);
+            ($this->message)($msg, $this);
         }
     }
 
