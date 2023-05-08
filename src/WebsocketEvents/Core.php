@@ -126,7 +126,8 @@ class Core extends PluginBase {
                 $message = $client->read(2048);
                 $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$client->id}: {$message}");
                 // Received a message, elaborate this!
-                $client->send('')
+                $client->send('MAGIC!')
+                die();
                 if ($message == 'hello world') {
                     /*
                     $response = 'Hello world v1.2 - SocketStream!';
