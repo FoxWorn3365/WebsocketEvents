@@ -68,7 +68,8 @@ class Core extends PluginBase {
             $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
             socket_connect($this->socket, $this->config->get('address', 'localhost'), $this->config->get('port', 1991));
             $this->socket = new SocketClient($this->socket, $this->getLogger());
-            $this->socket->write('skipconnection');
+            // Needs to send a CLEAR message
+            $this->socket->clearSend('skipconnection');
             return;
         }
 
@@ -78,10 +79,14 @@ class Core extends PluginBase {
             $client = socket_accept($this->server);
             // Accept connection
             $request = socket_read($client, 5000);
+            $GLOBAL_SERVER = null; // This var is dedicated to listen of simple server
             $client = new SocketClient($client, $this->getLogger());
             $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] New connection to server by Client {$client->id} v13 with message: {$request}");
             if ($client->translate($request) != 'skipconnection') {
                 $client->accept($request);
+            } else {
+                $this->getLogger()->info(TextFormat::DARK_GREEN . "[CustomServer][] Recognized the role 'ServerConsole.Server' to Client {$client->id}");
+                $GLOBAL_SERVER = $client;
             }
             /*
             $user->onMessage(function(?string $message, SocketClient $user) {
