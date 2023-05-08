@@ -212,7 +212,7 @@ class Core extends PluginBase {
 	}
 
 	public function onDisable() : void{
-        $this->socket->write('completeClose');
+        $this->socket->clearSend('completeClose');
         $this->socket->read();
         $this->getLogger()->info(TextFormat::RED . "Shutting down WS Server done, awaiting for confirm...");
         // Let's check if some socket connection is open!
