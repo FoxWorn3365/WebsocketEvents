@@ -45,6 +45,7 @@ class SocketClient {
     protected function mask(string $text) : string {
         $b1 = 0x80 | (0x1 & 0x0f);
         $length = strlen($text);
+        $header = "";
     
         if ($length <= 125)
             $header = pack('CC', $b1, $length);

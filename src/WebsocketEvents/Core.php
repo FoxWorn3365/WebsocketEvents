@@ -163,6 +163,7 @@ class Core extends PluginBase {
                     */
                     break;
                 } elseif ($message == 'completeClose') {
+                    $client->write('closing...');
                     $client->close();
                     $this->server_status = false;
                     socket_shutdown($this->server);
@@ -201,6 +202,8 @@ class Core extends PluginBase {
 
 	public function onDisable() : void{
         $this->socket->write('completeClose');
+        $this->getLogger()->info(TextFormat::RED . "Shutting down WS Server done, awaiting for confirm...");
+        $this->socket->read();
         // Let's check if some socket connection is open!
         /*
         if (apcu_exists("{$this->socketID}_pm-socket")) {
@@ -212,7 +215,7 @@ class Core extends PluginBase {
         }
         */
         //$this->socket->close();
-		$this->getLogger()->info(TextFormat::DARK_RED . " Plugin disabled!");
+		$this->getLogger()->info(TextFormat::DARK_RED . "Plugin disabled!");
 	}
 
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
