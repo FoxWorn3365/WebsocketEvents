@@ -51,7 +51,7 @@ class Core extends PluginBase {
         }
 //		$this->getServer()->getPluginManager()->registerEvents(new ExampleListener($this), $this);
 //		$this->getScheduler()->scheduleRepeatingTask(new BroadcastTask($this->getServer()), 120);
-		$this->getLogger()->info(TextFormat::DARK_GREEN . " Plugin enabled!");
+		$this->getLogger()->info(TextFormat::DARK_GREEN . "Plugin enabled!");
         // Creating the WebSocket server
         $this->server = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         $this->server_status = true;
@@ -63,14 +63,14 @@ class Core extends PluginBase {
         if ($pid == -1) {
             die("Cannot fork!");
         } elseif ($pid) {
-            $this->getLogger()->info(TextFormat::YELLOW . " Loading WSS Server...");
+            $this->getLogger()->info(TextFormat::YELLOW . "Loading WSS Server...");
             sleep(2);
-            $this->getLogger()->info(TextFormat::DARK_GREEN . " Connection to wss server...");
+            $this->getLogger()->info(TextFormat::DARK_GREEN . "Connection to wss server...");
             $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
             socket_connect($this->socket, $this->config->get('address', 'localhost'), $this->config->get('port', 1991));
-            $this->socket = new SocketClient($this->socket, $this->getLogger());
+            $this->socket = new SocketClient($this->socket, $this->getLogger(), false);
             // Needs to send a CLEAR message
-            $this->socket->clearSend('skipconnection');
+            $this->socket->write('skipconnection');
             return;
         }
 

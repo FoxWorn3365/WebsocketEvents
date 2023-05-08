@@ -10,11 +10,13 @@ class SocketClient {
     public $message;
     public $id;
     public $log;
+    public bool $needsMask;
 
-    function __construct(\Socket $connection, $log) {
+    function __construct(\Socket $connection, $log, bool $needsMask = true) {
         $this->id = rand(10, 1000) . rand(10, 1000);
         $this->client = $connection;
         $this->log = $log;
+        $this->needsMask = $needsMask;
     }
 
     public function onMessage(callable $callback) : void {
@@ -54,7 +56,11 @@ class SocketClient {
     }
 
     public function read(int $lenght = 1024) : ?string {
-        return $this->unmask(socket_read($this->client, $lenght, PHP_BINARY_READ));
+        $response = socket_read($this->client, $lenght, PHP_BINARY_READ);
+        if ($this->needsMask) {
+            return $this->unmask($response);
+        }
+        return $response;
     }
 
     public function translate(string $text) : string {
@@ -62,7 +68,9 @@ class SocketClient {
     }
 
     public function write(string $message) : void {
-        $message = $this->mask($message);
+        if ($this->needsMask) {
+            $message = $this->mask($message);
+        }
         if (!socket_send($this->client, $message, strlen($message), 0)) {
             $this->close();
         }
