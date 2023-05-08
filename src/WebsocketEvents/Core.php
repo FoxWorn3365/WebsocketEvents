@@ -82,8 +82,7 @@ class Core extends PluginBase {
                     $user->send('Hello world v1.2 - SocketStream!');
                     continue;
                 } elseif ($message == 'close') {
-                    $response = 'Closing client session...';
-                    $user->send('Closing client session...')
+                    $user->send('Closing client session...');
                     $user->close();
                     break;
                 }
