@@ -5,7 +5,7 @@ namespace SocketEvents;
 class SocketClient {
     protected $client;
     protected bool $connected;
-    public callable $message;
+    public $message;
     public $id;
 
     function __construct(\Socket $connection) {
