@@ -98,6 +98,6 @@ class SocketClient {
         $this->connected = false;
         $log->info(TextFormat::GRAY . "[CustomServer][I] User {$this->id} disconnected!");
         socket_close($this->client); 
-        $this = null;
+        @$this = null;
     }
 }
