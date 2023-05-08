@@ -12,11 +12,9 @@ use pocketmine\utils\Config;
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\lang\Language;
 use pocketmine\player\PlayerDataProvider;
-use Sock\SocketClient;
-use Sock\SocketServer;
-use Sock\SocketException;
+use FoxSocket\SocketClientManager;
 
-require __DIR__ . '/../Sock/SocketServer.php';
+require __DIR__ . '/../FoxSockets/SocketManager.php';
 
 class Core extends PluginBase {
     protected $server;
@@ -73,7 +71,18 @@ class Core extends PluginBase {
         $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] WSS CustomServer1 started!");
         while (true) {
             $client = socket_accept($this->server);
-            socket_write($client, 'Connected!', strlen('Connected!'));
+            // Accept connection
+            preg_match('#Sec-WebSocket-Key: (.*)\r\n#', $request, $matches);
+            $key = base64_encode(pack(
+                'H*',
+                sha1($matches[1] . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')
+            ));
+            $headers = "HTTP/1.1 101 Switching Protocols\r\n";
+            $headers .= "Upgrade: websocket\r\n";
+            $headers .= "Connection: Upgrade\r\n";
+            $headers .= "Sec-WebSocket-Version: 13\r\n";
+            $headers .= "Sec-WebSocket-Accept: {$key}\r\n\r\n";
+            socket_write($client, $headers, strlen($headers));
 
             $this->clients[] = $client;
             $pog = pcntl_fork();
