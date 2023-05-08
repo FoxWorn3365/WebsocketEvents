@@ -141,6 +141,7 @@ class Core extends PluginBase {
                 } elseif ($message == 'close') {
                     $client->send('Closing...');
                     $client->close();
+                    $connected = false;
                     unset($client);
                     /*
                     $response = 'Closing client session...';
