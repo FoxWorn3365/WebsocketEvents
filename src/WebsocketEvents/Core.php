@@ -180,7 +180,7 @@ class Core extends PluginBase {
             }
             $this->getLogger()->info(TextFormat::YELLOW . "[CustomServer][] Client [oldclientid] disconnected from mainLoop()!");
             // Close process
-            exec("kill -9 {$pog}");
+            //exec("kill -9 {$pog}");
             return;
 
         }
