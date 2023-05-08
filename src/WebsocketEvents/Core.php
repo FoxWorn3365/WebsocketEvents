@@ -24,6 +24,7 @@ class Core extends PluginBase {
     public ConsoleCommandSender $console;
     public Language $language;
     public $socketID;
+    public bool $server_status;
 
 	public function onLoad() : void{
         // Assign SocketID
@@ -82,11 +83,11 @@ class Core extends PluginBase {
             $GLOBAL_SERVER = null; // This var is dedicated to listen of simple server
             $client = new SocketClient($client, $this->getLogger());
             $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] New connection to server by Client {$client->id} v13 with message: {$request}");
-            if ($client->translate($request) != 'skipconnection') {
+            if ($request != 'skipconnection') {
                 $client->accept($request);
             } else {
                 $client->clearAccept();
-                //$this->getLogger()->info(TextFormat::DARK_GREEN . "[CustomServer][] Recognized the role 'ServerConsole.Server' to Client {$client->id}");
+                $this->getLogger()->info(TextFormat::DARK_GREEN . "[CustomServer][] Recognized the role 'ServerConsole.Server' to Client {$client->id}");
                 $GLOBAL_SERVER = $client;
             }
             /*
