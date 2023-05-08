@@ -120,10 +120,15 @@ class Core extends PluginBase {
                 $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Connection received, restarting WSS listen...");
                 continue;
             }
+            $connection = true;
             $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client {$client->id} conected");
             // Client management - Main fork and listen activated
-            while (true) {
-                $message = $client->read(2048);
+            while ($connection) {
+                $message = $client->read(20048);
+                if ($message == false) {
+                    $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] Client {$client->id} Disconnected!");
+                    $connection = false;
+                }
                 $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$client->id}: {$message}");
                 // Received a message, elaborate this!
                 if ($message == 'hello world') {
