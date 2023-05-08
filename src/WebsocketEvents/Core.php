@@ -74,6 +74,7 @@ class Core extends PluginBase {
             // Accept connection
             $request = socket_read($client, 5000);
             $user = new SocketClient($client);
+            $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] New connection to server by Client {$user->id} v13");
             $user->accept($request);
             $user->onMessage(function(?string $message, SocketClient $user) {
                 $this->getLogger()->info(TextFormat::GRAY . "[CustomServer][] SocketMessage from Client {$user->id}: {$message}");
