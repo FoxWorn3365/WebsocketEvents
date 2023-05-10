@@ -1,0 +1,54 @@
+---
+#########################################
+# \      \ /      / +------     +-----  #
+#  \      X      /  |           |       #
+#   \    / \    /   +-----+     +---    #
+#    \  /   \  /          |     |       #
+#     \/     \/     ------+     +-----  #
+#########################################
+# WebSocket Events v0.8@indev BETA
+# "Receive, handle and execute action from and to your PocketMine-MP server via WebSockets!"
+#########################################
+# (C) 2023-now Federico Cosma (FoxWorn3365) and contributors
+# MIT License
+# Require php8 or newer
+#########################################
+#        CONTACTS
+# Email: foxworn3365@gmail.com
+# Discord: FoxWorn#0001
+# GitHub https://github.com/FoxWorn3365/WebsocketEvents
+# GitHub (author): https://github.com/FoxWorn3365
+##########################################
+
+enabled: true  ## Is the plugin enabled?
+
+#-----------------------------------
+# > WebSocket Server Configuration
+#-----------------------------------
+# Default settings
+server-ip: localhost   # The host of the internal WebSocket Server. use 0.0.0.0 to open to others
+server-port: 1991      # The port
+timeout: 2             # Timeout (in seconds) of client message listener
+max-connections: 10    # The number of max simultaneous WebSocket Connections for this server
+
+# Auth settings
+# - This array contains all allowed WebSockets Keys
+tokens:
+  - myTestToken1
+ 
+# Permissions settings
+# - This array contains all permissions for every token.
+# - Use * to allow all permissions
+# - Permissions is like: [part].[name], for example player.name
+# - As the global permission you can use player.* to give access to the entire player class
+# - Command and player execution is under "execution.[player|server].[action]"
+permissions:
+  myTestToken1:
+    - '*'
+  myTestToken2:
+    - player.*
+    - server.execute
+
+# Utils
+waiting-connection-time: 1 # The time the server waits before establishing internal WebSocket connections
+...
