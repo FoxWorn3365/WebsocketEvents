@@ -48,6 +48,9 @@ permissions:
   myTestToken2:
     - player.*
     - server.execute
+    
+# Event settings
+event-socket-token: myEventTestToken  # This toke will be used by the event websocket client to connect. Il will have * as permission
 
 # Utils
 waiting-connection-time: 1 # The time the server waits before establishing internal WebSocket connections
