@@ -29,7 +29,7 @@ class ActionHeartbeat extends Task {
     }
 
     public function send(string $message) {
-        echo "RESPONDED EVENT {$this->id}\n";
+        //echo "RESPONDED EVENT {$this->id}\n";
         file_put_contents($this->plugin->getDataFolder() . "/.cache/.responses/{$this->id}", $message);
     }
 

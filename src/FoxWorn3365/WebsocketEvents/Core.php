@@ -158,7 +158,9 @@ class Core extends PluginBase implements Listener {
                     break;
                 }
                 $client = @socket_accept($socket);
+                var_dump($client);
                 // Set timeout to answer
+                /*
                 if (gettype($client) == 'boolean') {
                     $count = 0;
                     foreach ($clientList as $clientSession) {
@@ -172,6 +174,7 @@ class Core extends PluginBase implements Listener {
                     $server_status = false;
                     break;
                 }
+                */
                 socket_set_option($client, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 5, 'usec' => 0));
                 $logger->info(TextFormat::DARK_AQUA . "[CustomServer][LOOP] Accepted connection, elaborating it...");
                 if ($client == false || $client == null) {
@@ -182,12 +185,17 @@ class Core extends PluginBase implements Listener {
                 }
                 // Accept connection
                 $request = socket_read($client, 7500);
+                var_dump($request);
                 if (empty($request)) {
                     $logger->info(TextFormat::GOLD . "[CustomServer][LOOP] Client timeout-ed, restarting loop...");
                     continue;
                 }
                 socket_set_option($client, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 0, 'usec' => 0));
-                $client = new SocketClient($client, $logger, true);
+                if (strpos($request, 'Type: simple-connection')) {
+                    $client = new SocketClient($client, $logger, false);
+                } else {
+                    $client = new SocketClient($client, $logger, true);
+                }
                 $client->allowed = $config->get('tokens', []);
                 $logger->info(TextFormat::GRAY . "[CustomServer][] New connection to server by Client {$client->id} v13 with message: {$request}");
                 if ($request === 'helloworld_callbackrole_skipconnection_preventingfall') {
@@ -796,8 +804,8 @@ class Core extends PluginBase implements Listener {
         $respawn->world = $respawn->world->getFolderName();
         $this->connectSocketAndSendData([
             'event' => true,
-            'eventName' => 'player_kick',
-            'eventClass' => 'playerKick',
+            'eventName' => 'player_respawn',
+            'eventClass' => 'playerRespawn',
             'data' => [
                 'player' => $player,
                 'respawn' => $respawn
