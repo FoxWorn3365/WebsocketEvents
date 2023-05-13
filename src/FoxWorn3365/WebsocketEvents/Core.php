@@ -158,9 +158,10 @@ class Core extends PluginBase implements Listener {
                     break;
                 }
                 $client = @socket_accept($socket);
-                var_dump($client);
+                //var_dump($client);
+                socket_set_option($client, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 5, 'usec' => 0));
+
                 // Set timeout to answer
-                /*
                 if (gettype($client) == 'boolean') {
                     $count = 0;
                     foreach ($clientList as $clientSession) {
@@ -174,8 +175,7 @@ class Core extends PluginBase implements Listener {
                     $server_status = false;
                     break;
                 }
-                */
-                socket_set_option($client, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 5, 'usec' => 0));
+                
                 $logger->info(TextFormat::DARK_AQUA . "[CustomServer][LOOP] Accepted connection, elaborating it...");
                 if ($client == false || $client == null) {
                     $logger->info(TextFormat::RED . "[CustomServer][LOOP] Client is false, closing gate...");
@@ -185,7 +185,6 @@ class Core extends PluginBase implements Listener {
                 }
                 // Accept connection
                 $request = socket_read($client, 7500);
-                var_dump($request);
                 if (empty($request)) {
                     $logger->info(TextFormat::GOLD . "[CustomServer][LOOP] Client timeout-ed, restarting loop...");
                     continue;
