@@ -13,23 +13,19 @@ use pocketmine\utils\Config;
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\lang\Language;
 use pocketmine\player\PlayerDataProvider;
-use SocketEvents\SocketClient;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\Packet;
 use pocketmine\scheduler\Task;
 
 class ActionHeartbeat extends Task {
     protected Core $plugin;
-    protected SocketClient $socket;
     protected $id;
 
-    public function __construct(Core $plugin, SocketClient $socket) {
+    public function __construct(Core $plugin) {
       $this->plugin = $plugin;
-      $this->socket = $socket;
     }
 
     public function send(string $message) {
-        //echo "RESPONDED EVENT {$this->id}\n";
         file_put_contents($this->plugin->getDataFolder() . "/.cache/.responses/{$this->id}", $message);
     }
 
@@ -59,7 +55,7 @@ class ActionHeartbeat extends Task {
             if ($do->type == "player") {
                 $player = $this->plugin->getServer()->getPlayerExact($do->target);
                 if ($do->class == "fetch") {
-                    $player = $this->plugin->fetchPlayer($player);
+                    $player = Fetch::player($player);
                     $this->send(json_encode(['status' => 200, 'message' => 'completed!', 'type' => $do->class, 'id' => $id, 'data' => $player]));
                 } else {
                     $function = $do->action;

@@ -30,28 +30,38 @@ server-ip: localhost   # The host of the internal WebSocket Server. use 0.0.0.0 
 server-port: 1991      # The port
 timeout: 2             # Timeout (in seconds) of client message listener
 max-connections: 10    # The number of max simultaneous WebSocket Connections for this server
+allow-doubleauth: false # Allows transmission of the token after accepting the connection temporarily with a timeout of 2s
 
 # Auth settings
 # - This array contains all allowed WebSockets Keys
 tokens:
   - myTestToken1
- 
+  - myTestToke2
+  
 # Permissions settings
 # - This array contains all permissions for every token.
 # - Use * to allow all permissions
 # - Permissions is like: [part].[name], for example player.name
 # - As the global permission you can use player.* to give access to the entire player class
-# - Command and player execution is under "execution.[player|server].[action]"
+# - Command and player execution is under "exec.[player|server]"
+# - Permission for receive event: "event.[event_name]"
 permissions:
   myTestToken1:
     - '*'
   myTestToken2:
     - player.*
-    - server.execute
+    - server.playerList
+    - exec.server
     
 # Event settings
 event-socket-token: myEventTestToken  # This toke will be used by the event websocket client to connect. Il will have * as permission
+event-close-token: myCloseToken         # This token will be used by the server manager to prompt a shutdown command to all connected clients
 
 # Utils
 waiting-connection-time: 1 # The time the server waits before establishing internal WebSocket connections
+full_logs: false                   # Should the plugin share the WSS server logs with the console?
+
+# Enable or disable some event listeners
+on_player_move: false
+on_block_update: false
 ...

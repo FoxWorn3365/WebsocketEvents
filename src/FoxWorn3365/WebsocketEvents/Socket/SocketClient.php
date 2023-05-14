@@ -1,12 +1,13 @@
 <?php
 
-namespace SocketEvents;
+namespace FoxWorn3365\WebsocketEvents\Socket;
 
 use pocketmine\utils\TextFormat;
 use FoxWorn3365\WebsocketEvents\PermissionManager;
+use FoxWorn3365\WebsocketEvents\Useful;
 
 class SocketClient {
-    protected $client;
+    protected \Socket $client;
     public bool $connected = false;
     public $message;
     public $id;
@@ -15,14 +16,20 @@ class SocketClient {
     public string $ip = "void";
     public int $port = 0;
     public $key;
+    protected $config;
     public array $allowed = [];
     public array $permissions = [];
 
-    function __construct(\Socket $connection, $log, bool $needsMask = false) {
+    function __construct(\Socket $connection, $log, $config, bool $needsMask = false) {
+        $this->config = $config;
         $this->id = rand(10, 1000) . rand(10, 1000);
         $this->client = $connection;
         $this->log = $log;
         $this->needsMask = $needsMask;
+
+        if (!$this->config->get('full_logs', false)) {
+            $this->log = new Useful();
+        }
     }
 
     public function onMessage(callable $callback) : void {
@@ -35,6 +42,9 @@ class SocketClient {
     }
 
     protected function unmask(string $text) : string {
+        if (empty($text)) {
+            return "";
+        }
         $length = ord($text[1]) & 127;
         if ($length == 126) {
             $masks = substr($text, 4, 4);
@@ -116,26 +126,15 @@ class SocketClient {
 
     public function isAllowed() {
         if (!in_array($this->key, $this->allowed)) {
-            $this->log->info(TextFormat::RED . "[CustomServer][WatchDog] Unauthorized client {$this->id} tried to connect, removing it...");
             return false;
         }
         return true;
     }
 
-    public function accept(string $request) : bool {
-        preg_match('#Sec-WebSocket-Key: (.*)\r\n#', $request, $matches);
-        preg_match('#Authorization: Basic (.*)\r\n#', $request, $matches_a);
-        $this->key = str_replace(': ', '', base64_decode(@$matches_a[1]) . ' ');
-        $this->log->info(TextFormat::GRAY . "[CustomServer][WatchDog] Security token excange from {$this->id}: BasicAuth@{$this->key}");
-        $this->log->info(TextFormat::DARK_GREEN . "[CustomServer][WatchDog] Security token excange with {$this->id} completed, client " . TextFormat::BOLD . "connected");
-        if (!$this->isAllowed()) {
-            $this->send('Cant connect!');
-            $this->close();
-            return false;
-        }
+    public function generateHeaders(string $key) : void {
         $key = base64_encode(pack(
             'H*',
-            sha1($matches[1] . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')
+            sha1($key . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')
         ));
         $headers = "HTTP/1.1 101 Switching Protocols\r\n";
         $headers .= "Upgrade: websocket\r\n";
@@ -143,6 +142,33 @@ class SocketClient {
         $headers .= "Sec-WebSocket-Version: 13\r\n";
         $headers .= "Sec-WebSocket-Accept: {$key}\r\n\r\n";
         $this->clearSend($headers);
+    }
+
+    public function accept(string $request, bool $double = false) : bool {
+        preg_match('#Sec-WebSocket-Key: (.*)\r\n#', $request, $matches);
+        preg_match('#Authorization: Basic (.*)\r\n#', $request, $matches_a);
+        $this->key = str_replace(' ', '', str_replace(': ', '', base64_decode(@$matches_a[1]) . ' '));
+        $this->connected = true;
+        $this->log->info(TextFormat::GRAY . "[CustomServer][WatchDog] Security token excange from {$this->id}: BasicAuth@{$this->key}");
+        if (!$this->isAllowed()) {
+            if ($double && empty($matches_a[1])) {
+                $this->log->info(TextFormat::YELLOW . "[CustomServer][WatchDog] Received a connection from a non-based auth system, asking for the token...");
+                $this->generateHeaders($matches[1]);
+                socket_set_option($this->client, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 2, 'usec' => 0));
+                $this->key = $this->read();
+                if ($this->isAllowed()) {
+                    socket_set_option($this->client, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 0, 'usec' => 0));
+                    $this->log->info(TextFormat::DARK_GREEN . "[CustomServer][WatchDog] Security token excange with {$this->id} completed, client " . TextFormat::BOLD . "connected");
+                    $this->connected = true;
+                    return true;
+                }
+            }
+            $this->log->info(TextFormat::RED . "[CustomServer][WatchDog] Unauthorized client {$this->id} tried to connect, removing it...");
+            $this->close();
+            return false;
+        }
+        $this->log->info(TextFormat::DARK_GREEN . "[CustomServer][WatchDog] Security token excange with {$this->id} completed, client " . TextFormat::BOLD . "connected");
+        $this->generateHeaders($matches[1]);
         $this->connected = true;
         return true;
     }

@@ -13,7 +13,7 @@ use pocketmine\utils\Config;
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\lang\Language;
 use pocketmine\player\PlayerDataProvider;
-use SocketEvents\SocketClient;
+use FoxWorn3365\WebsocketEvents\Socket\SocketClient;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\Packet;
 use pocketmine\scheduler\Task;
@@ -21,31 +21,33 @@ use pocketmine\scheduler\Task;
 class HeartbeatClass extends Task {
     private $plugin;
     protected SocketClient $socket;
-    private array $loadable;
-    protected $data_location;
-    protected array $playerload = [
-        'online' => 'isConnected',
-        'display_name' => 'getDisplayName',
-        'gamemode' => 'getGamemode',
-        'healt' => 'getHealth',
-        'id' => 'getId',
-        'last_played' => 'getLastPlayed',
-        'location' => 'getLocation',
-        'max_healt' => 'getMaxHealth',
+    private array $loadable = [
+        'data_path' => 'getDataPath',
+        'difficulty' => 'getDifficulty',
+        'file_path' => 'getFilePath',
+        'force_gamemode' => 'getForceGamemode',
+        //'gamemode' => 'getGamemode',
+        'ip' => 'getIp',
+        'ip_bans' => 'getIPBans',
+        'ipv6' => 'getIpV6',
+        'max_players' => 'getMaxPlayers',
+        'motd' => 'getMotd',
         'name' => 'getName',
-        'name_tag' => 'getNameTag',
-        'position' => 'getPosition',
-        //'skin' => 'getSkin',
-        'spawn' => 'getSpawn',
-        'uuid' => 'getUniqueId',
-        'viewers' => 'getViewers',
-        'world' => 'getWorld'
+        'ops' => 'getOps',
+        //'players' => 'getOnlinePlayers',
+        'online_mode' => 'getOnlineMode',
+        'pocketmine_version' => 'getPocketMineVersion',
+        'port' => 'getPort',
+        'tick' => 'getTick',
+        'tps' => 'getTicksPerSecond',
+        'version' => 'getVersion',
+        'hardcore' => 'isHardcore'
     ];
+    protected $data_location;
 
     public function __construct($plugin, SocketClient $socket, array $loadable){
       $this->plugin = $plugin;
       $this->socket = $socket;
-      $this->loadable = $loadable;
       $this->data_location = $plugin->getDataFolder();
      
     }
@@ -56,40 +58,22 @@ class HeartbeatClass extends Task {
         
         foreach ($this->loadable as $item => $function) {
             $jsonServer->{$item} = @$this->plugin->getServer()->$function() ?? "void";
-            //var_dump($jsonServer->{$item});
         }
-
-        //var_dump($this->plugin->getServer()->getOnlinePlayers());
 
         $jsonServer->{'players'} = [];
         $players = new \stdClass;
 
         foreach($this->plugin->getServer()->getOnlinePlayers() as $player) {
             $jsonServer->{'players'}[] = $player->getName();
-            $playerClass = new \stdClass;
-            foreach ($this->playerload as $element => $function) {
-                $playerClass->{$element} = $player->$function();
-            }
-            $playerClass->skin = new \stdClass;
-            $playerClass->skin->cape = new \stdClass;
-            $playerClass->skin->cape->data = $player->getSkin()->getCapeData();
-            $playerClass->skin->data = $player->getSkin()->getSkinData();
-            $playerClass->skin->id = $player->getSkin()->getSkinId();
-            unset($playerClass->location->world);
-            unset($playerClass->position->world);
-            $playerClass->spawn->world = $playerClass->spawn->world->getFolderName();
-            //$playerClass->uuid = @$playerClass->uuid->uuid;
-            $playerClass->gamemode = $playerClass->gamemode->getEnglishName();
-            $players->{$player->getName()} = $playerClass;
         }
 
         $jsonServer->{'ip_bans'} = $jsonServer->{'ip_bans'}->getEntries();
         $jsonServer->{'ops'} = $jsonServer->{'ops'}->getAll(true);
 
         // Now load players
+        // haha no
 
         file_put_contents($this->data_location . '/.cache/.server_chunk.json', json_encode($jsonServer));
-        file_put_contents($this->data_location . '/.cache/.players_chunk.json', json_encode($players));
 
         $this->socket->clearSend('heartbeat');
     }
