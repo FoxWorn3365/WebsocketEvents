@@ -101,7 +101,7 @@ class Core extends PluginBase implements Listener {
             $this->socket = new SocketClient($this->socket, $this->getLogger(), $this->config);
 
             // Add life support with chunk for not lose the internal ws connection
-            $this->getScheduler()->scheduleRepeatingTask(new HeartbeatClass($this, $this->socket, $this->storable), 8*20);
+            $this->getScheduler()->scheduleRepeatingTask(new HeartbeatClass($this, $this->socket), 8*20);
 
             // Add the tick manager
             $this->getScheduler()->scheduleRepeatingTask(new ActionHeartbeat($this), 2);
@@ -287,7 +287,7 @@ class Core extends PluginBase implements Listener {
             ]
         ]);
     }
-
+    
     public function onPlayerJoin(PlayerJoinEvent $e) : void {
         // Player join event
         $player = Fetch::player($e->getPlayer());
