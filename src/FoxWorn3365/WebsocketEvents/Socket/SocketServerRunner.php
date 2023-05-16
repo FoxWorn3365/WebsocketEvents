@@ -141,7 +141,7 @@ class SocketServerRunner {
                 foreach ($this->clients as $id => $clientSession) {
                     // Try to send the event via an "event" => true and a "status" => 201
                     // But first let's check the permissions
-                    if (!in_array($message->eventName, $client->permissions['events'])) {
+                    if (!in_array($message->eventName, @$clientSession->permissions['events'])) {
                         continue;
                     }
                     

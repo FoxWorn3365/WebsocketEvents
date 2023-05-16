@@ -45,7 +45,7 @@ class HeartbeatClass extends Task {
     ];
     protected $data_location;
 
-    public function __construct($plugin, SocketClient $socket, array $loadable){
+    public function __construct($plugin, SocketClient $socket){
       $this->plugin = $plugin;
       $this->socket = $socket;
       $this->data_location = $plugin->getDataFolder();

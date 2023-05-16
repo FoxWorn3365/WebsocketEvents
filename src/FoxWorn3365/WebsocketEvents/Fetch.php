@@ -7,6 +7,7 @@ class Fetch {
 
     // Player
     public static function player(object $player) : ?object {
+        return $player;
         $playerload = [
             'online' => 'isConnected',
             'display_name' => 'getDisplayName',
