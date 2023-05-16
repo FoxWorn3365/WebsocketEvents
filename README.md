@@ -132,6 +132,19 @@ It's possible here to use `event.*`!
 ### `allow-doubleauth`
 This parameter is precisely stated in the [plugin connectivity guide](https://foxworn3365.github.io/Websocket-Events-Lib/docs/connectivity)
 
+## F.A.Q.
+### "If I try to restart the server it says the address is already in use!"
+> This can happen when the WebSocket server working in a different process than the main one has not shut down properly.<br>
+> To fix this problem, terminate all open versions of Pocketmine with `pkill -f -9 Pocket`
+
+### "I cannot access the WebSocket server from outside the VPS/VDS."
+> There may be various reasons so check that:
+> - WebSocket Server's IP is `0.0.0.0`.
+> - The port used is open.
+> - The server is running.<br>
+> If all this does not work then you should use NGINX or Apache2 to open the WS server to the "whole world."
+> If you need help with this please contact me :D
+
 ## Contacts
 **Email:** `foxworn3365@gmail.com`<br>
 **Discord:** `FoxWorn#0001`
